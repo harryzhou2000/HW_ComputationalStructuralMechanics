@@ -1,0 +1,96 @@
+%!TEX program = xelatex
+\documentclass[UTF8,c5size]{ctexart}
+
+
+\title{{\bfseries 第二次作业}}
+\author{周涵宇 2018011600}
+\date{}
+
+\usepackage[a4paper]{geometry}
+\geometry{left=0.75in,right=0.75in,top=1in,bottom=1in}
+
+\usepackage[
+UseMSWordMultipleLineSpacing,
+MSWordLineSpacingMultiple=1.5
+]{zhlineskip}
+
+\usepackage{fontspec}
+\setmainfont{Cambria Math}
+% \setmonofont{JetBrains Mono}
+\setCJKmainfont{仿宋}[AutoFakeBold=true]
+\setCJKsansfont{黑体}[AutoFakeBold=true]
+
+\usepackage{bm}
+\usepackage{amsmath}
+
+\begin{document}
+
+\maketitle
+
+考虑欧拉-伯努利梁直梁单元，$x$ 为梁的方向，2节点单元，扭转
+转角、拉伸位移采用拉格朗日插值，弯曲位移与弯曲转角共同通过
+Hermite三次多项式插值及其导数取得，单元自由度记为:
+
+\begin{equation}
+\bm{a_e}=[u^1\ \ v^1\ \ w^1\ \ \theta^1_x\ \ \theta^1_y\ \ \theta^1_z
+\ \ u^2\ \ v^2\ \ w^2\ \ \theta^2_x\ \ \theta^2_y\ \ \theta^2_z]^T
+\end{equation}
+
+拉格朗日2节点一维插值为:
+
+\begin{equation}
+N^1(\xi) = 1+\xi,\ \ N^2(\xi) = 1-\xi
+\end{equation}
+
+Hermite插值为:
+
+\begin{equation}
+\begin{split}
+N^1(\xi)&=\ \ \ \frac{1}{2}-\frac{3}{4}\xi+\frac{1}{4}\xi^3\\
+N^2(\xi)&=\ \ \ \frac{1}{4}-\frac{1}{4}\xi-\frac{1}{4}\xi^2+\frac{1}{4}\xi^3\\
+N^3(\xi)&=\ \ \ \frac{1}{2}+\frac{3}{4}\xi-\frac{1}{4}\xi^3\\
+N^4(\xi)&=-\frac{1}{4}-\frac{1}{4}\xi+\frac{1}{4}\xi^2+\frac{1}{4}\xi^3
+\end{split}
+\end{equation}
+
+其中，$1,2$对应$\xi=-1$的函数值和一阶导，$3,4$对应$\xi=1$。
+
+欧拉-伯努利直梁内的总势能为：
+
+\begin{equation}
+    \begin{split}
+        \Pi_p=
+            &\int_{l}{\left[
+            \frac{1}{2}EI_y\left(\frac{d^2w}{dx^2}\right)^2+
+            \frac{1}{2}EI_z\left(\frac{d^2v}{dx^2}\right)^2+
+            \frac{1}{2}EA\left(\frac{du}{dx}\right)^2+
+            \frac{1}{2}GI_x\left(\frac{d\theta_x}{dx}\right)^2+            
+            \right]dl}+\\
+            &+\int_{l}{\left[
+                uP_x+vP_y+wP_z+\theta_xMx+\theta_yMy+\theta_zMz
+                \right]dl}\\
+            &+\sum_{\forall i_c}{\left[
+            u_{i_c}P_{xi_c}+v_{i_c}P_{vi_c}+w_{i_c}P_{zi_c}
+            +\theta_{xi_c}M_{xi_c}+\theta_{yi_c}M_{yi_c}+\theta_{zi_c}M_{zi_c}
+            \right]}
+    \end{split}
+\end{equation}
+
+势能变分原理为
+
+$$
+\delta\Pi_p=0
+$$
+
+其中要求位移满足可能，即边界满足位移约束，转角满足:
+
+\begin{equation}
+    \theta_y=-\frac{dw}{dx},\ \ \ \ \theta_z=\frac{dv}{dx}
+\end{equation}
+
+
+
+
+
+    
+\end{document}
