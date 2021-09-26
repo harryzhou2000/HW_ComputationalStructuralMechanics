@@ -22,6 +22,7 @@ MSWordLineSpacingMultiple=1.5
 
 \usepackage{bm}
 \usepackage{amsmath}
+\usepackage{array}
 
 \begin{document}
 
@@ -39,21 +40,23 @@ Hermite三次多项式插值及其导数取得，单元自由度记为:
 拉格朗日2节点一维插值为:
 
 \begin{equation}
-N^1(\xi) = 1+\xi,\ \ N^2(\xi) = 1-\xi
+N^1(\xi) = \frac{1-\xi}{2},\ \ N^2(\xi) = \frac{1+\xi}{2}
 \end{equation}
 
 Hermite插值为:
 
 \begin{equation}
 \begin{split}
-N^1(\xi)&=\ \ \ \frac{1}{2}-\frac{3}{4}\xi+\frac{1}{4}\xi^3\\
-N^2(\xi)&=\ \ \ \frac{1}{4}-\frac{1}{4}\xi-\frac{1}{4}\xi^2+\frac{1}{4}\xi^3\\
-N^3(\xi)&=\ \ \ \frac{1}{2}+\frac{3}{4}\xi-\frac{1}{4}\xi^3\\
-N^4(\xi)&=-\frac{1}{4}-\frac{1}{4}\xi+\frac{1}{4}\xi^2+\frac{1}{4}\xi^3
+N^1_H(\xi)&=\ \ \ \frac{1}{2}-\frac{3}{4}\xi+\frac{1}{4}\xi^3\\
+N^2_H(\xi)&=\ \ \ \frac{1}{4}-\frac{1}{4}\xi-\frac{1}{4}\xi^2+\frac{1}{4}\xi^3\\
+N^3_H(\xi)&=\ \ \ \frac{1}{2}+\frac{3}{4}\xi-\frac{1}{4}\xi^3\\
+N^4_H(\xi)&=-\frac{1}{4}-\frac{1}{4}\xi+\frac{1}{4}\xi^2+\frac{1}{4}\xi^3
 \end{split}
 \end{equation}
 
-其中，$1,2$对应$\xi=-1$的函数值和一阶导，$3,4$对应$\xi=1$。
+其中，$1,2$对应$\xi=-1$的函数值和{\bfseries 参数空间}内的一阶导，$3,4$对应$\xi=1$。
+
+以上插值都定义在$[-1,1]$。
 
 欧拉-伯努利直梁内的总势能为：
 
@@ -88,9 +91,91 @@ $$
     \theta_y=-\frac{dw}{dx},\ \ \ \ \theta_z=\frac{dv}{dx}
 \end{equation}
 
+通过以上泛函变分原理构建有限元格式，与刚度阵有关部分是其二次部分，
+有单元刚度阵如:
+
+\begin{equation}
+    \begin{split}
+    \bm{K_e} = &\int_{l}{\left[
+        EI_z\left(\frac{d^2\bm{N_y}}{dx^2}\right)^T
+        \left(\frac{d^2\bm{N_y}}{dx^2}\right)+
+        EI_y\left(\frac{d^2\bm{N_z}}{dx^2}\right)^T
+        \left(\frac{d^2\bm{N_z}}{dx^2}\right)
+        \right]dl}\\+
+    &\int_{l}{\left[
+        EA\left(\frac{d\bm{N_{u}}}{dx}\right)^T
+        \left(\frac{d\bm{N_{u}}}{dx}\right)+
+        GI_x\left(\frac{d\bm{N_{\theta_x}}}{dx}\right)^T
+        \left(\frac{d\bm{N_{\theta_x}}}{dx}\right)
+    \right]dl}
+    \end{split}
+\end{equation}
+
+对于2节点单元参数空间-物理空间采用线性变换，则可知有:
 
 
+$$
+\int_{L}{fdl}=\frac{l}{2}\int_{-1}^{1}{fd\xi}
+$$
 
 
+以及:
+
+$$
+\frac{df}{dx} = \frac{2}{l}\bullet\frac{df}{d\xi}
+$$
+
+则可知其中，形函数矩阵分别定义为：
+
+\begin{equation}
+    \bm{N_y}(\xi) = 
+    \addtocounter{MaxMatrixCols}{40}
+    \begin{bmatrix}
+        0&N^1_H&0&0&0&\frac{l}{2}N^2_H&0&N^3_H&0&0&0&\frac{l}{2}N^4_H
+    \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+    \bm{N_z}(\xi) = 
+    \addtocounter{MaxMatrixCols}{40}
+    \begin{bmatrix}
+        0&0&N^1_H&0&-\frac{l}{2}N^2_H&0&0&0&N^3_H&0&-\frac{l}{2}N^4_H&0
+    \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+    \bm{N_{u}}(\xi) = 
+    \addtocounter{MaxMatrixCols}{40}
+    \begin{bmatrix}
+        N^1&0&0&0&0&0&N^2&0&0&0&0&0
+    \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+    \bm{N_{\theta_x}}(\xi) = 
+    \addtocounter{MaxMatrixCols}{40}
+    \begin{bmatrix}
+        0&0&0&N^1&0&0&0&0&0&N^2&0&0
+    \end{bmatrix}
+\end{equation}
+
+注意以上由于所有的形函数矩阵需要右乘物理自由度，而物理自由度中的一阶导并不是参数空间的一阶导，
+其变换需要事先确定参数变换（比如等参变换等方案），此处是线性的所以直接通过缩放来获得。
+同时注意以上角度和一阶导的对应关系，包括(8)中的符号问题。
+
+此时，假设梁的弹性常数和截面都是均匀的，则积分可得：
+
+\begin{equation}
+    \begin{split}
+        &\left[\begin{array}{cccccccccccc} \frac{A\,E}{l} & 0 & 0 & 0 & 0 & 0 & -\frac{A\,E}{l} & 0 & 0 & 0 & 0 & 0\\ 0 & \frac{12\,E\,I_{z}}{l^3} & 0 & 0 & 0 & \frac{6\,E\,I_{z}}{l^2} & 0 & -\frac{12\,E\,I_{z}}{l^3} & 0 & 0 & 0 & \frac{6\,E\,I_{z}}{l^2}\\ 0 & 0 & \frac{12\,E\,I_{y}}{l^3} & 0 & -\frac{6\,E\,I_{y}}{l^2} & 0 & 0 & 0 & -\frac{12\,E\,I_{y}}{l^3} & 0 & -\frac{6\,E\,I_{y}}{l^2} & 0\\ 0 & 0 & 0 & \frac{G\,I_{x}}{l} & 0 & 0 & 0 & 0 & 0 & -\frac{G\,I_{x}}{l} & 0 & 0\\ 0 & 0 & -\frac{6\,E\,I_{y}}{l^2} & 0 & \frac{4\,E\,I_{y}}{l} & 0 & 0 & 0 & \frac{6\,E\,I_{y}}{l^2} & 0 & \frac{2\,E\,I_{y}}{l} & 0\\ 0 & \frac{6\,E\,I_{z}}{l^2} & 0 & 0 & 0 & \frac{4\,E\,I_{z}}{l} & 0 & -\frac{6\,E\,I_{z}}{l^2} & 0 & 0 & 0 & \frac{2\,E\,I_{z}}{l}\\ -\frac{A\,E}{l} & 0 & 0 & 0 & 0 & 0 & \frac{A\,E}{l} & 0 & 0 & 0 & 0 & 0\\ 0 & -\frac{12\,E\,I_{z}}{l^3} & 0 & 0 & 0 & -\frac{6\,E\,I_{z}}{l^2} & 0 & \frac{12\,E\,I_{z}}{l^3} & 0 & 0 & 0 & -\frac{6\,E\,I_{z}}{l^2}\\ 0 & 0 & -\frac{12\,E\,I_{y}}{l^3} & 0 & \frac{6\,E\,I_{y}}{l^2} & 0 & 0 & 0 & \frac{12\,E\,I_{y}}{l^3} & 0 & \frac{6\,E\,I_{y}}{l^2} & 0\\ 0 & 0 & 0 & -\frac{G\,I_{x}}{l} & 0 & 0 & 0 & 0 & 0 & \frac{G\,I_{x}}{l} & 0 & 0\\ 0 & 0 & -\frac{6\,E\,I_{y}}{l^2} & 0 & \frac{2\,E\,I_{y}}{l} & 0 & 0 & 0 & \frac{6\,E\,I_{y}}{l^2} & 0 & \frac{4\,E\,I_{y}}{l} & 0\\ 0 & \frac{6\,E\,I_{z}}{l^2} & 0 & 0 & 0 & \frac{2\,E\,I_{z}}{l} & 0 & -\frac{6\,E\,I_{z}}{l^2} & 0 & 0 & 0 & \frac{4\,E\,I_{z}}{l} \end{array}\right]
+        \\
+        &=\bm{K_e}
+    \end{split}
+\end{equation}
+
+给出了单元刚度阵。
+
+事实上，小变形直梁里面单元刚度阵是完全解耦的，拉伸、弯曲和扭转共4部分。
+梁的几何是弯曲时坐标变换使其各部分出现耦合。
     
 \end{document}
