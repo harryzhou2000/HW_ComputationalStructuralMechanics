@@ -1,0 +1,167 @@
+%!TEX program = xelatex
+\documentclass[UTF8,c5size]{ctexart}
+
+
+\title{{\bfseries 第三次作业}}
+\author{周涵宇 2018011600}
+\date{}
+
+\usepackage[a4paper]{geometry}
+\geometry{left=0.75in,right=0.75in,top=1in,bottom=1in}
+
+\usepackage[
+UseMSWordMultipleLineSpacing,
+MSWordLineSpacingMultiple=1.5
+]{zhlineskip}
+
+\usepackage{fontspec}
+\setmainfont{Cambria Math}
+% \setmonofont{JetBrains Mono}
+\setCJKmainfont{仿宋}[AutoFakeBold=true]
+\setCJKsansfont{黑体}[AutoFakeBold=true]
+
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{array}
+
+\begin{document}
+
+\maketitle
+
+考虑铁木辛哥梁直梁单元，$x$ 为梁的方向。由于只考虑了小变形和直梁，
+弯曲可以单独求解，以下只考虑一个平面内的弯曲自由度，即考虑自由度
+$w$、$\theta_y=-\frac{dw}{dx}$。
+
+% \begin{equation}
+% \bm{a_e}=[u^1\ \ v^1\ \ w^1\ \ \theta^1_x\ \ \theta^1_y\ \ \theta^1_z
+% \ \ u^2\ \ v^2\ \ w^2\ \ \theta^2_x\ \ \theta^2_y\ \ \theta^2_z]^T
+% \end{equation}
+
+拉格朗日2节点一维插值为:
+
+\begin{equation}
+    N^1(\xi) = \frac{1-\xi}{2},\ \ N^2(\xi) = \frac{1+\xi}{2}
+\end{equation}
+
+拉格朗日3节点一维插值为：
+
+\begin{equation}
+    N^1(\xi) = \frac{\xi(\xi-1)}{2},\ \ 
+    N^2(\xi) = 1-\xi^2,\ \ 
+    N^3(\xi) = \frac{\xi(\xi+1)}{2}
+\end{equation}
+
+
+以上插值都定义在$[-1,1]$。
+
+铁木辛哥直梁内关于面内弯曲的势能为：
+
+\begin{equation}
+    \begin{split}
+        \Pi_p=
+            &\int_{l}{\left[
+            \frac{1}{2}EI_y\left(\frac{d\theta_y}{dx}\right)^2+  
+            \frac{1}{2}\frac{GA}{k}\left(\frac{dw}{dx}+\theta_y\right)^2
+            \right]dl}+\\
+            &-\int_{l}{\left[
+                wP_z+\theta_yM_y
+                \right]dl}\\
+            &-\sum_{\forall i_c}{\left[
+            w_{i_c}P_{zi_c}
+            +\theta_{yi_c}M_{yi_c}
+            \right]}
+    \end{split}
+\end{equation}
+
+注意此处的力矩载荷都是定义为y轴右手方向，与$\frac{dw}{dx}$不同。
+
+势能变分原理为
+
+$$
+\delta\Pi_p=0
+$$
+
+其中要求满足位移可能。
+
+变分并取形函数近似则有:
+
+\begin{equation}
+    (\bm{K_b}+\bm{K_s})\bm{a}=\bm{P}    
+\end{equation}
+
+拆分为单元则:
+
+\begin{equation}
+    \begin{split}
+        \bm{K_b^e}&=\int_{l}{EI_y\left(\frac{d\bm{N_\theta}}{dx}\right)^T\left(\frac{d\bm{N_\theta}}{dx}\right)dl}\\
+        \bm{K_s^e}&=\int_{l}{\frac{GA}{k}\bm{B_s}^T\bm{B_s}dl}\\
+        \bm{P^e}&=\int_{l}{\left[
+            \bm{N_w}^TP_z+\bm{N_\theta}^TM_y
+            \right]dl}+
+            \sum_{i_c}{\left[
+                \bm{N_w(\xi_{ic})}^TP_{zi_c}+\bm{N_\theta(\xi_{ic})}^TM_{yi_c}
+            \right]}
+    \end{split}
+\end{equation}
+
+其中给出了形函数矩阵
+以及局部自由度排列为:
+
+\begin{equation}
+    \begin{split}
+        \bm{N_w}&=
+        \begin{bmatrix}
+            N^1&0&N^2&0&\dotsb
+        \end{bmatrix}\\
+        \bm{N_\theta}&=
+        \begin{bmatrix}
+            0&N^1&0&N^2&\dotsb
+        \end{bmatrix}\\
+        \bm{B_s}&=\frac{d\bm{N_w}}{dx}+\bm{N_\theta}\\
+        \bm{a^e}&=
+        \begin{bmatrix}
+            w^1&\theta^1&w^2&\theta^2&\dotsb
+        \end{bmatrix}^T
+    \end{split}
+\end{equation}
+
+应对剪切锁死的方案是采用减缩积分，因此给出几种一维的高斯积分方案:
+
+\begin{equation}
+    \begin{split}
+        1).& \bm{\xi_p}=\begin{bmatrix}
+            0
+        \end{bmatrix}, \ 
+        \bm{w_p}=\begin{bmatrix}
+            2
+        \end{bmatrix}
+        \\ 2).& \bm{\xi_p}=\begin{bmatrix}
+            -\frac{1}{\sqrt{3}}&\frac{1}{\sqrt{3}}
+        \end{bmatrix}, \ 
+        \bm{w_p}=\begin{bmatrix}
+            1&1
+        \end{bmatrix}
+        \\ 3).& \bm{\xi_p}=\begin{bmatrix}
+            -0.774596669241483&0&0.774596669241483
+        \end{bmatrix}, \ 
+        \bm{w_p}=\begin{bmatrix}
+            \frac{5}{9}&\frac{8}{9}&\frac{5}{9}
+        \end{bmatrix}
+    \end{split}
+\end{equation}
+
+\begin{equation}
+    \begin{split}
+        A^H&=A\\
+        AV&=VD\\
+        v^HAv&=v^Hv\lambda\\
+        \overline{v^HAv}&=v^TA^Tv^HT=(v^HAv)^T=v^HAv=\text{somereal}\\
+        v^Hv&=\text{somereal}\\
+        \Rightarrow \lambda&=\text{somereal}\\
+        u^HAv&=u^Hv\lambda_v=v^HAu=v^Hu\lambda_u=\overline{u^Hv}\lambda_u\\
+        \Rightarrow u^Hv&=0
+    \end{split}
+\end{equation}
+
+
+\end{document}
