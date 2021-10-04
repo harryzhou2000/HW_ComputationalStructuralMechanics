@@ -31,6 +31,8 @@ end
 
 elem.NImr = fN(elem.coord_intpoint);
 elem.dNIdLimr = dfN(elem.coord_intpoint);
+elem.fN = fN;
+elem.dfN = dfN;
 
 % fN([-1,0,1])
 % dfN([-1,0,1])

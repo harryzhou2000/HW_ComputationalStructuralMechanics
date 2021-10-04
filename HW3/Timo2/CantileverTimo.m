@@ -2,8 +2,8 @@ clc;close all;
 %% Inputs and Pres
 nn=3;np=2;
 % nn=2;np=1;
-Ne = 100;
-nmode = 5;
+Ne = 1;
+nmode = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%  Material & Geom  %%%%%%
@@ -17,9 +17,9 @@ nmode = 5;
 L = 1;
 rho = 1e3*1;
 E = 1e9;
-nu = 0.3;
+nu = -0.5;
 G = E/(2*(nu+1));
-h = 0.1;
+h = 100; 
 b = 0.1;
 
 Iy = h^3*b/12;
@@ -69,7 +69,7 @@ P = zeros(ndof,1);
 Nmat = ndof*5;
 Ki = nan(Nmat,1);Kj = Ki;Kv = Ki;
 % Mi = nan(Nmat,1);Mj = Mi;
-Mv = Mi;
+Mv = Ki;
 nfill = 0;
 
 for ie = 1:Ne
@@ -121,7 +121,7 @@ plot(xnode,Ar(1,:));
 
 figure(2);
 clf;hold on;
-for i = 1:3
+for i = 1:min(nmode,3)
     Mr = reshape(V(:,i),2,[]);
     plot(xnode,Mr(1,:),'DisplayName',sprintf('f=%.6g',sqrt(D(i,i))));
 end

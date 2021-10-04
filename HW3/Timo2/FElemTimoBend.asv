@@ -10,6 +10,6 @@ elem.Nt(2:2:end) = elem.NImr;
 elem.dNw(1:2:end) = elem.dNIdLimr;
 elem.dNt(2:2:end) = elem.dNIdLimr;
 elem.fNw = @(eta) reshape([elem.fN(eta)';zeros(1,elem.num_node)],[],1);
-elem.fNt = @(eta) reshape([zeros(1,elem.num_node);elem.fN(eta)'],[],1);
+elem.fNw = @(eta) reshape([elem.fN(eta)';zeros(1,elem.num_node)],[],1);
 
 

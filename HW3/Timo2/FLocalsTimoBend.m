@@ -30,8 +30,8 @@ for ip = 1:elem.num_intpoint
 end
 
 for iconc = 1:numel(etaPconc)
-    P = P + elem.Nw(:,ip) * Pconc(iconc*2-1);
-    P = P + elem.Nt(:,ip) * Pconc(iconc*2-0);
+    P = P + elem.fNw(etaPconc(iconc)) * Pconc(iconc*2-1);
+    P = P + elem.fNt(etaPconc(iconc)) * Pconc(iconc*2-0);
 end
 
 for idof = 1:elem.num_node*2
