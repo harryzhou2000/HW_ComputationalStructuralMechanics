@@ -36,8 +36,27 @@ end
 
 for idof = 1:elem.num_node*2
     if(~isnan(Pfix(idof)))
-        K(idof,idof) = K(idof,idof)*1e5;
+        diag = K(idof,idof);
+        R = K(:,idof);
+        K(idof,:) = 0;
+        K(:,idof) = 0;
+        for jdof = 1:elem.num_node*2
+            if(isnan(Pfix(jdof)))
+               P(jdof) =  P(jdof) - R(jdof) * Pfix(idof);
+            end
+        end
+        K(idof,idof) = diag;
         P(idof) = K(idof,idof)*Pfix(idof);
+        if(nargout >2)
+            diagM = M(idof,idof);
+            M(idof,:) = 0;
+            M(:,idof) = 0;
+            M(idof,idof)  = diagM;
+        end
+        % to acc
+        
+%          K(idof,idof) = K(idof,idof)*1e15;
+%          P(idof) = K(idof,idof)*Pfix(idof);
     end
 end
 

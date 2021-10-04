@@ -10,7 +10,7 @@ switch(np)
         elem.coord_intpoint = [-1/sqrt(3),1/sqrt(3)];
         elem.coord_intweight = [1,1];
     case 3
-        elem.coord_intpoint = [-0.774596669241483,0,0.774596669241483];
+        elem.coord_intpoint = [-0.7745966692414833,0,0.7745966692414833];
         elem.coord_intweight = [5,8,5]/9;
     otherwise
         error('FBendRelease::Bad num_intpoint');

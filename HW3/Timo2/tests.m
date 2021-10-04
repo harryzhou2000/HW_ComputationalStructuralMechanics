@@ -47,8 +47,8 @@ end
 linesL2 = cell(1,12);
 linesL1 = cell(1,12);
 for i = 1:12
-   linesL2{i} = sprintf([repmat('&%.6E',1,4),'\\\\'],dispsL2(i,:));
-   linesL1{i} = sprintf([repmat('&%.6E',1,4),'\\\\'],dispsL1(i,:));
+   linesL2{i} = sprintf([repmat('&%.15E',1,4),'\\\\'],dispsL2(i,:));
+   linesL1{i} = sprintf([repmat('&%.15E',1,4),'\\\\'],dispsL1(i,:));
 end
 
 
